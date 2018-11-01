@@ -510,7 +510,7 @@ function scanAll() {
                     .then(() => delete e['address']);
             });
         }, err => false),
-        doMac ? pExec('arp-scan -lgq --retry=7')
+        doMac ? pExec('arp-scan -I lagg0 -lgq --retry=7')
         .then(res => res && res.match(/(\d*\.){3}\d*\s*([\dA-F]{2}\:){5}[\dA-F]{2}/gi))
         .then(res => pSeriesP(res, item => {
             const s = item.split('\t');
@@ -566,7 +566,7 @@ function scanAll() {
 
             /*
                         if (doMac && item.hasMAC)
-                            all.push(pSeriesP(item.hasMAC, mac => pExec('arp-scan -lgq  --retry=5 --destaddr='+ mac)
+                            all.push(pSeriesP(item.hasMAC, mac => pExec('arp-scan -I lagg0 -lgq  --retry=5 --destaddr='+ mac)
                                 .then(ret => {
                                     item.ipHere = item.ipHere || ret.toUpperCase().indexOf(mac)>0; 
             //                        _I(`arp-scan for ${item.id}  ${item.ipHere} returned ${ret}`);
@@ -750,7 +750,7 @@ function main() {
         }).then(stdout => / is alive/.test(stdout), false)
         .then(result => {
             doFping = result;
-            return pExec('!arp-scan -lgq').then(r => r, r => r)
+            return pExec('!arp-scan -I lagg0 -lgq').then(r => r, r => r)
         }).then(stdout => /[0-9] packets received/.test(stdout), false)
         .then(result => {
             doMac = result;
